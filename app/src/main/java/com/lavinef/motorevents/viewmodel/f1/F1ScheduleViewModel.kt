@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lavinef.motorevents.data.f1.F1Race
 import com.lavinef.motorevents.data.f1.repository.F1RaceRepository
 import com.lavinef.motorevents.data.f1.repository.F1SeasonRepository
+import com.lavinef.motorevents.utils.STOP_TIMEOUT_MILLIS_DEFAULT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +26,8 @@ sealed interface F1UiState {
     data class Error(val message: String) : F1UiState
 }
 
+private const val YEAR_RANGE = 5
+
 @HiltViewModel
 class F1ScheduleViewModel @Inject constructor(
     private val f1RaceRepository: F1RaceRepository,
@@ -42,21 +45,21 @@ class F1ScheduleViewModel @Inject constructor(
         _selectedSeason.flatMapLatest { season -> f1RaceRepository.getSeasonScheduleFromDB(season) }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
+                started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS_DEFAULT),
                 initialValue = emptyList()
             )
 
     val nextRaceRound: StateFlow<Int?> =
         cachedRaces.map { races -> findNextRaceRound(races) }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS_DEFAULT),
             initialValue = null
         )
 
     val availableSeasons: StateFlow<List<Int>> = f1SeasonRepository.getSeasons().stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = (Year.now().value.rangeUntil (Year.now().value - 5)).toList()
+        started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS_DEFAULT),
+        initialValue = (Year.now().value.rangeUntil(Year.now().value - YEAR_RANGE)).toList()
     )
 
     init {

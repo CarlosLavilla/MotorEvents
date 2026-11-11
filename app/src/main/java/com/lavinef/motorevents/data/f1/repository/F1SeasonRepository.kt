@@ -4,6 +4,7 @@ import com.lavinef.motorevents.data.f1.jolpica.service.JolpicaF1ApiService
 import com.lavinef.motorevents.data.f1.local.dao.F1SeasonDao
 import com.lavinef.motorevents.data.f1.local.model.F1SeasonEntity
 import com.lavinef.motorevents.data.safeApiCall
+import com.lavinef.motorevents.utils.WEEK_MILLIS
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -12,22 +13,20 @@ class F1SeasonRepository @Inject constructor(
 ) {
 
     suspend fun getLastSeason(): Int {
-        val lastSeason = f1SeasonDao.getLastSeason()
+        var lastSeason = f1SeasonDao.getLastSeason()
 
         if (lastSeason == null) {
             val lastSeasons = retrieveSeasonsFromApi().getOrElse { listOf() }
             val seasonToReturn = f1SeasonDao.insertSeasonsAndReturnLatest(lastSeasons)
             return seasonToReturn
         } else {
-            val weekMillis = 7 * 24 * 3600 * 1000
-            if (lastSeason.updatedAt + weekMillis < System.currentTimeMillis()) {
+            if (lastSeason.updatedAt + WEEK_MILLIS < System.currentTimeMillis()) {
                 val seasonsSize = f1SeasonDao.countSeasons()
-                val posteriorSeason =
-                    retrieveSeasonsFromApi(1, seasonsSize).getOrElse { listOf() }
+                val posteriorSeason = retrieveSeasonsFromApi(1, seasonsSize).getOrElse { listOf() }
                 if (posteriorSeason.isNotEmpty()) {
                     val newSeason = posteriorSeason[0]
                     f1SeasonDao.insertSeason(newSeason)
-                    return newSeason.season
+                    lastSeason = newSeason
                 }
             }
             return lastSeason.season
@@ -35,8 +34,7 @@ class F1SeasonRepository @Inject constructor(
     }
 
     private suspend fun retrieveSeasonsFromApi(
-        limit: Int = 200,
-        offset: Int = 0
+        limit: Int = 200, offset: Int = 0
     ): Result<List<F1SeasonEntity>> {
         return safeApiCall("Retrieving seasons") {
             val apiResponse = apiService.getSeasons(limit, offset)

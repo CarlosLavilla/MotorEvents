@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import com.lavinef.motorevents.ui.app.MainAppScreen
-import com.lavinef.motorevents.ui.theme.MotorEventsTheme
+import com.lavinef.motorevents.ui.app.theme.MotorEventsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

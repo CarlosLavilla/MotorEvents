@@ -18,14 +18,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideLocalDatabase(@ApplicationContext context: Context): MotorEventsLocalDB {
-        return Room
-            .databaseBuilder(
-                context,
-                MotorEventsLocalDB::class.java,
-                "motor_events_db"
-            )
-            .fallbackToDestructiveMigration(dropAllTables = true)
-            .build()
+        return Room.databaseBuilder(
+            context, MotorEventsLocalDB::class.java, "motor_events_db"
+        ).fallbackToDestructiveMigration(dropAllTables = true).build()
     }
 
     @Provides

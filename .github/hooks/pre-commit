@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "Running local quality & security checks..."
+
+# Run detekt (static code analysis) and unit tests
+./gradlew detekt testDebugUnitTest
+
+if[ $? -ne 0 ]; then
+    echo "Build checks failed! Commit aborted."
+    exit 1
+
+echo "All checks passed successfully!"
+exit 0
