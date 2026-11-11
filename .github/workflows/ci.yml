@@ -1,0 +1,54 @@
+name: MotorEvents CI & Quality Security Check
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  security-and-quality:
+    name: Code Quality & Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant Execute Permissions for Gradlew
+        run: chmod +x gradlew
+
+      # 1. Static Code Analysis
+      - name: Run Detekt Analysis
+        run: ./gradlew detekt
+
+      # 2. Dependency Security Vulnerability Scan
+      - name: Dependency Vulnerability Scanner
+        uses: dependency-check/Dependency-Check-Action@main
+        with:
+          project: 'MotorEvents'
+          path: '.'
+          format: 'HTML'
+
+      # 3. Unit Testing & Code Coverage
+      - name: Run Unit Tests & Generate Coverage
+        run: ./gradlew testDebugUnitTest jacocoTestReport
+
+      # 4. Upload Security & Coverage Reports
+      - name: Upload Security & Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-security-reports
+          path: |
+            build/reports/detekt
+            build/reports/jacoco
+            reports/
