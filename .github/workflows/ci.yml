@@ -33,7 +33,7 @@ jobs:
 
       # 2. Dependency Security Vulnerability Scan
       - name: Dependency Vulnerability Scanner
-        uses: dependency-check/Dependency-Check-Action@main
+        uses: dependency-check/Dependency-Check_Action@main
         with:
           project: 'MotorEvents'
           path: '.'
