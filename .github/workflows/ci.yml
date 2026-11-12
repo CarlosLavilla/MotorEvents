@@ -1,4 +1,4 @@
-name: MotorEvents CI & Quality Security Check
+name: MotorEvents CI
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  security-and-quality:
-    name: Code Quality & Security Scan
+  code-quality:
+    name: Code Quality
     runs-on: ubuntu-latest
 
     steps:
@@ -18,11 +18,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
           cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
 
       - name: Grant Execute Permissions for Gradlew
         run: chmod +x gradlew
@@ -31,24 +34,27 @@ jobs:
       - name: Run Detekt Analysis
         run: ./gradlew detekt
 
-      # 2. Dependency Security Vulnerability Scan
-      - name: Dependency Vulnerability Scanner
-        uses: dependency-check/Dependency-Check_Action@main
-        with:
-          project: 'MotorEvents'
-          path: '.'
-          format: 'HTML'
-
-      # 3. Unit Testing & Code Coverage
+      # 2. Unit Testing & Code Coverage
       - name: Run Unit Tests & Generate Coverage
-        run: ./gradlew testDebugUnitTest jacocoTestReport
+        run: ./gradlew createDebugUnitTestCoverageReport
 
-      # 4. Upload Security & Coverage Reports
-      - name: Upload Security & Coverage
+      # 3. Run SonarQube Analysis
+      - name: Run SonarQube Cloud Analysis
+        if: ${{ !env.ACT }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar
+
+      # 4. Upload Tests Reports
+      - name: Upload Tests Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: quality-security-reports
+          name: quality-reports
           path: |
-            build/reports/detekt
-            build/reports/jacoco
-            reports/
+            **/build/reports/detekt
+            **/build/reports/coverage
+            **/build/reports/tests
+          if-no-files-found: warn
+
+
