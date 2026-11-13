@@ -1,0 +1,72 @@
+name: MotorEvents CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - master
+    types: [ opened, synchronize, reopened ]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Grant Execute Permissions for Gradlew
+        run: chmod +x gradlew
+
+      # 1. Static Code Analysis
+      - name: Run Detekt Analysis
+        run: ./gradlew detekt
+
+      # 2. Unit Testing & Code Coverage
+      - name: Run Unit Tests & Generate Coverage
+        run: ./gradlew createDebugUnitTestCoverageReport
+
+      # 3. Run SonarQube Analysis
+      - name: Run SonarQube Cloud Analysis
+        if: ${{ !env.ACT }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar
+
+      # 4. Upload Tests Reports
+      - name: Upload Tests Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: quality-reports
+          path: |
+            **/build/reports/detekt
+            **/build/reports/coverage
+            **/build/reports/tests
+          if-no-files-found: warn

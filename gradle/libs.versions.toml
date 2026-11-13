@@ -15,8 +15,6 @@ compose-bom = "2026.09.00"
 lifecycle = "2.11.0"
 navigationCompose = "2.10.2"
 icons-extended = "1.7.8"
-#Compose Plugins
-compose = "2.4.21"
 # Hilt
 hilt-android = "2.60.1"
 hilt-navigation-compose = "1.4.0"
@@ -28,9 +26,13 @@ gson = "3.0.0"
 # Room
 room = "2.8.5"
 # Tests
-mockk = "1.14.11"
+mockk = "1.14.12"
 corrutines-test = "1.11.0"
 turbine = "1.2.1"
+# Detekt
+detekt = "1.23.8"
+# CI
+sonarqube = "7.5.0.8588"
 
 [libraries]
 # Default
@@ -71,10 +73,13 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 [plugins]
 # Default
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 # Compose
-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "compose" }
+compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 # Ksp
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 # Hilt
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android" }
+# Detekt
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+#CI
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }

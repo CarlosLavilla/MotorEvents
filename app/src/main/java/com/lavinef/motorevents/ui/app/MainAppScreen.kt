@@ -20,7 +20,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lavinef.motorevents.ui.f1.F1RootScreen
 
-sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
+private sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object F1Schedule : Screen("f1_home", "F1", Icons.Default.SportsMotorsports)
 }
 
@@ -43,7 +43,12 @@ fun MainAppScreen() {
 
                 items.forEach { screen ->
                     NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = screen.title) },
+                        icon = {
+                            Icon(
+                                screen.icon,
+                                contentDescription = screen.title
+                            )
+                        },
                         label = { Text(screen.title) },
                         selected = currentRoute == screen.route,
                         onClick = {
@@ -56,8 +61,7 @@ fun MainAppScreen() {
                                     restoreState = true
                                 }
                             }
-                        }
-                    )
+                        })
                 }
 
             }
