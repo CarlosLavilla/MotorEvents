@@ -3,10 +3,15 @@ name: MotorEvents CI
 on:
   push:
     branches:
-      - master
+      - '**'
   pull_request:
     branches:
       - master
+    types: [ opened, synchronize, reopened ]
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   code-quality:
@@ -16,16 +21,25 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '21'
-          cache: 'gradle'
+          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
       - name: Grant Execute Permissions for Gradlew
         run: chmod +x gradlew
@@ -56,5 +70,3 @@ jobs:
             **/build/reports/coverage
             **/build/reports/tests
           if-no-files-found: warn
-
-
