@@ -14,11 +14,11 @@ class F1SeasonRepository @Inject constructor(
 
     suspend fun getLastSeason(): Int {
         var lastSeason = f1SeasonDao.getLastSeason()
+        var seasonToReturn: Int
 
         if (lastSeason == null) {
             val lastSeasons = retrieveSeasonsFromApi().getOrElse { listOf() }
-            val seasonToReturn = f1SeasonDao.insertSeasonsAndReturnLatest(lastSeasons)
-            return seasonToReturn
+            seasonToReturn = f1SeasonDao.insertSeasonsAndReturnLatest(lastSeasons)
         } else {
             if (lastSeason.updatedAt + WEEK_MILLIS < System.currentTimeMillis()) {
                 val seasonsSize = f1SeasonDao.countSeasons()
@@ -29,8 +29,9 @@ class F1SeasonRepository @Inject constructor(
                     lastSeason = newSeason
                 }
             }
-            return lastSeason.season
+            seasonToReturn = lastSeason.season
         }
+        return seasonToReturn
     }
 
     private suspend fun retrieveSeasonsFromApi(
