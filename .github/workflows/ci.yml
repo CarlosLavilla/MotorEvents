@@ -61,7 +61,7 @@ jobs:
         if: ${{ !env.ACT }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --info # TODO Testing
+        run: ./gradlew sonar
 
       # 5. Upload Tests Reports
       - name: Upload Tests Results
