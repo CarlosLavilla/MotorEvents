@@ -1,4 +1,4 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Top-level build file where you can add configuration options common to all subprojects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.compose) apply false
@@ -15,9 +15,12 @@ sonar {
 
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            "${projectDir}/app/build/reports/coverage/test/debug/report.xml"
+            "app/build/reports/coverage/test/debug/report.xml"
         )
 
         property("sonar.qualitygate.wait", "true")
+
+        // Exclusions
+        property("sonar.exclusions", "**/*.webp")
     }
 }
