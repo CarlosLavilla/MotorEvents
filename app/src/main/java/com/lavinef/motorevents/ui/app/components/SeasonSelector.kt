@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+private const val MIN_VALUE_SCROLL_NO_ANIMATION = 5
+
 @Composable
 fun SeasonSelector(seasons: List<Int>, selectedSeason: Int, onSeasonSelected: (Int) -> Unit) {
     val listState = rememberLazyListState()
@@ -22,7 +24,7 @@ fun SeasonSelector(seasons: List<Int>, selectedSeason: Int, onSeasonSelected: (I
         val selectedIndex = seasons.indexOf(selectedSeason)
         if (selectedIndex != -1) {
             val targetIndex = maxOf(selectedIndex - 2, 0)
-            if (listState.firstVisibleItemIndex == 0 && targetIndex > 5) {
+            if (listState.firstVisibleItemIndex == 0 && targetIndex > MIN_VALUE_SCROLL_NO_ANIMATION) {
                 listState.scrollToItem(targetIndex)
             } else {
                 listState.animateScrollToItem(targetIndex)

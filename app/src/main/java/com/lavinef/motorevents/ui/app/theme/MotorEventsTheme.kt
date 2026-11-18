@@ -1,4 +1,4 @@
-package com.lavinef.motorevents.ui.theme
+package com.lavinef.motorevents.ui.app.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

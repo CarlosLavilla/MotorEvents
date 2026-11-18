@@ -17,7 +17,7 @@ interface F1SeasonDao {
     fun getSeasonsOrderedAscAsFlow(): Flow<List<Int>>
 
     @Query("SELECT COUNT(1) FROM F1_SEASON")
-    fun countSeasons(): Int
+    suspend fun countSeasons(): Int
 
     @Insert
     suspend fun insertSeasons(seasons: List<F1SeasonEntity>)

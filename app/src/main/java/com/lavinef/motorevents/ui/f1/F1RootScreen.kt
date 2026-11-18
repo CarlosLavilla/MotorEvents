@@ -22,7 +22,7 @@ import com.lavinef.motorevents.ui.app.components.SeasonSelector
 import com.lavinef.motorevents.viewmodel.f1.F1ScheduleViewModel
 import kotlinx.coroutines.launch
 
-enum class F1TopTab(val title: String) {
+private enum class F1TopTab(val title: String) {
     SCHEDULE("Schedule"), STANDINGS("Standings")
 }
 

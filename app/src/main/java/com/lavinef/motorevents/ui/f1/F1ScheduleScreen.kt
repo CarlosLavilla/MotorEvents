@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lavinef.motorevents.data.f1.F1Race
-import com.lavinef.motorevents.ui.theme.getFlagEmoji
+import com.lavinef.motorevents.ui.app.getFlagEmoji
 import com.lavinef.motorevents.viewmodel.f1.F1ScheduleViewModel
 import com.lavinef.motorevents.viewmodel.f1.F1UiState
 
@@ -84,12 +84,11 @@ fun F1ScheduleScreen(viewModel: F1ScheduleViewModel) {
 @Composable
 fun RaceCard(race: F1Race, isNextRace: Boolean) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isNextRace) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
-        ),
-        border = if (isNextRace) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
-        elevation = CardDefaults.cardElevation(if (isNextRace) 6.dp else 4.dp)
+        modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
+            containerColor = if (isNextRace) MaterialTheme.colorScheme.primaryContainer
+            else MaterialTheme.colorScheme.surfaceVariant
+        ), border = if (isNextRace) BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        else null, elevation = CardDefaults.cardElevation(if (isNextRace) 6.dp else 4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -137,4 +136,3 @@ fun RaceCard(race: F1Race, isNextRace: Boolean) {
     }
 
 }
-

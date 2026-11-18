@@ -7,6 +7,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface JolpicaF1ApiService {
+
     @GET("{season}/races/")
     suspend fun getSeasonSchedule(
         @Path("season") season: String,

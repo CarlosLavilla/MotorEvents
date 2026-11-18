@@ -5,6 +5,7 @@ import com.lavinef.motorevents.data.f1.jolpica.service.JolpicaF1ApiService
 import com.lavinef.motorevents.data.f1.local.dao.F1RaceDao
 import com.lavinef.motorevents.data.f1.local.model.F1RaceEntity
 import com.lavinef.motorevents.data.safeApiCall
+import com.lavinef.motorevents.utils.DAY_MILLIS
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -14,8 +15,7 @@ import java.time.format.DateTimeParseException
 import javax.inject.Inject
 
 class F1RaceRepository @Inject constructor(
-    private val apiService: JolpicaF1ApiService,
-    private val f1RaceDao: F1RaceDao
+    private val apiService: JolpicaF1ApiService, private val f1RaceDao: F1RaceDao
 ) {
     private val _dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
     private val _dateFormater = DateTimeFormatter.ISO_DATE
@@ -37,10 +37,8 @@ class F1RaceRepository @Inject constructor(
 
     suspend fun refreshSeasonScheduleFromAPI(season: Int): Result<Unit> {
         val lastUpdatedAt = f1RaceDao.getLastUpdatedTimestamp(season) ?: 0
-        val cacheValidityDurationMillis = 24 * 60 * 60 * 1000
 
-        if (System.currentTimeMillis() - lastUpdatedAt < cacheValidityDurationMillis)
-            return Result.success(Unit)
+        if (System.currentTimeMillis() - lastUpdatedAt < DAY_MILLIS) return Result.success(Unit)
 
         return safeApiCall("Refresh Schedule for season $season") {
             val response = apiService.getSeasonSchedule(season.toString())
@@ -50,8 +48,7 @@ class F1RaceRepository @Inject constructor(
 
             val entities = remoteRaces.map { race ->
                 var rawRaceDate = race.date
-                if (race.time != null)
-                    rawRaceDate += "T" + race.time
+                if (race.time != null) rawRaceDate += "T" + race.time
 
                 val raceDate = try {
                     LocalDateTime.parse(rawRaceDate, _dateTimeFormatter)
