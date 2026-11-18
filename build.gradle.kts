@@ -17,5 +17,7 @@ sonar {
             "sonar.coverage.jacoco.xmlReportPaths",
             "${projectDir}/app/build/reports/coverage/test/debug/report.xml"
         )
+
+        property("sonar.qualitygate.wait", "true")
     }
 }
